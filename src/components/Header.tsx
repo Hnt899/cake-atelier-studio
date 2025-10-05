@@ -1,17 +1,16 @@
 import { ShoppingBasket, Instagram, MessageCircle, Send, Search } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 
-export const Header = () => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+interface HeaderProps {
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+}
 
+export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search
-    console.log("Search:", searchQuery);
   };
 
   return (
@@ -50,9 +49,9 @@ export const Header = () => {
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Поиск по каталогу"
+                placeholder="Поиск по названию торта"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => onSearchChange?.(e.target.value)}
                 className="pr-10 bg-background border-2 border-secondary"
               />
               <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
