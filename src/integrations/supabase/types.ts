@@ -14,6 +14,103 @@ export type Database = {
   }
   public: {
     Tables: {
+      order_history: {
+        Row: {
+          comment: string | null
+          completed_at: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date: string
+          id: string
+          items: Json
+          order_id: string
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          completed_at?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date: string
+          id?: string
+          items: Json
+          order_id: string
+          total_price: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          completed_at?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_date?: string
+          id?: string
+          items?: Json
+          order_id?: string
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date: string
+          id: string
+          items: Json
+          status: Database["public"]["Enums"]["order_status"] | null
+          total_price: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date: string
+          id?: string
+          items: Json
+          status?: Database["public"]["Enums"]["order_status"] | null
+          total_price: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_date?: string
+          id?: string
+          items?: Json
+          status?: Database["public"]["Enums"]["order_status"] | null
+          total_price?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string
@@ -44,15 +141,104 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      saved_cakes: {
+        Row: {
+          created_at: string | null
+          id: string
+          layers: Json
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          layers: Json
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          layers?: Json
+          name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_cakes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      complete_order: {
+        Args: { order_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      order_status: "processing" | "preparing" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -179,6 +365,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: ["processing", "preparing", "completed"],
+    },
   },
 } as const
