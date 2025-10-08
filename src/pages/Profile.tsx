@@ -38,6 +38,7 @@ interface Order {
   comment?: string;
   status: string;
   created_at: string;
+  track_number?: string;
 }
 
 export const Profile = () => {
@@ -151,9 +152,12 @@ export const Profile = () => {
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-      processing: { label: "В обработке", variant: "default" },
+      pending: { label: "На рассмотрении", variant: "default" },
+      accepted: { label: "Принят", variant: "secondary" },
       preparing: { label: "Готовится", variant: "secondary" },
+      processing: { label: "В обработке", variant: "default" },
       completed: { label: "Выполнен", variant: "outline" },
+      cancelled: { label: "Отменён", variant: "destructive" },
     };
 
     const statusInfo = statusMap[status] || { label: status, variant: "default" };
@@ -226,39 +230,57 @@ export const Profile = () => {
           
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Current Order */}
-            {currentOrder && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="w-5 h-5" />
-                    Текущий заказ
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Статус:</span>
-                      {getStatusBadge(currentOrder.status)}
-                    </div>
-                    <div>
-                      <span className="font-medium">Дата доставки:</span>
-                      <p>{new Date(currentOrder.delivery_date).toLocaleDateString("ru-RU")}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium">Сумма:</span>
-                      <p className="text-xl font-bold">{currentOrder.total_price} ₽</p>
-                    </div>
-                    {currentOrder.comment && (
-                      <div>
-                        <span className="font-medium">Комментарий:</span>
-                        <p className="text-muted-foreground">{currentOrder.comment}</p>
+            {/* Current Order Tracking */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Отслеживание заказа
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {currentOrder ? (
+                  <div className="space-y-4">
+                    {currentOrder.track_number && (
+                      <div className="bg-accent/20 p-3 rounded-lg">
+                        <p className="text-sm font-medium mb-1">Трек-номер заказа:</p>
+                        <p className="text-2xl font-bold text-accent">{currentOrder.track_number}</p>
                       </div>
                     )}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Статус:</span>
+                        {getStatusBadge(currentOrder.status)}
+                      </div>
+                      <div>
+                        <span className="font-medium">Дата доставки:</span>
+                        <p>{new Date(currentOrder.delivery_date).toLocaleDateString("ru-RU")}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium">Сумма:</span>
+                        <p className="text-xl font-bold">{currentOrder.total_price} ₽</p>
+                      </div>
+                      {currentOrder.comment && (
+                        <div>
+                          <span className="font-medium">Комментарий:</span>
+                          <p className="text-muted-foreground">{currentOrder.comment}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-2">У вас пока нет активных заказов</p>
+                    <p className="text-sm text-muted-foreground">
+                      Сделайте заказ и отслеживайте его в реальном времени!
+                    </p>
+                    <Button asChild className="mt-4">
+                      <a href="/catalog">Перейти к каталогу</a>
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
             
             {/* Saved Cakes */}
             <Card>

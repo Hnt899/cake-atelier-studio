@@ -25,6 +25,7 @@ export type Database = {
           items: Json
           order_id: string
           total_price: number
+          track_number: string | null
           user_id: string
         }
         Insert: {
@@ -37,6 +38,7 @@ export type Database = {
           items: Json
           order_id: string
           total_price: number
+          track_number?: string | null
           user_id: string
         }
         Update: {
@@ -49,6 +51,7 @@ export type Database = {
           items?: Json
           order_id?: string
           total_price?: number
+          track_number?: string | null
           user_id?: string
         }
         Relationships: [
@@ -72,6 +75,7 @@ export type Database = {
           items: Json
           status: Database["public"]["Enums"]["order_status"] | null
           total_price: number
+          track_number: string | null
           updated_at: string | null
           user_id: string
         }
@@ -85,6 +89,7 @@ export type Database = {
           items: Json
           status?: Database["public"]["Enums"]["order_status"] | null
           total_price: number
+          track_number?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -98,6 +103,7 @@ export type Database = {
           items?: Json
           status?: Database["public"]["Enums"]["order_status"] | null
           total_price?: number
+          track_number?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -236,9 +242,18 @@ export type Database = {
         Args: { order_id: string }
         Returns: undefined
       }
+      generate_track_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
-      order_status: "processing" | "preparing" | "completed"
+      order_status:
+        | "processing"
+        | "preparing"
+        | "completed"
+        | "pending"
+        | "accepted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -366,7 +381,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      order_status: ["processing", "preparing", "completed"],
+      order_status: [
+        "processing",
+        "preparing",
+        "completed",
+        "pending",
+        "accepted",
+      ],
     },
   },
 } as const

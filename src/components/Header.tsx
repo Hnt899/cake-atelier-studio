@@ -46,7 +46,10 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
               <Link to="/about">Обо мне</Link>
             </Button>
             <Button variant="ghost" asChild className="hover:bg-hover">
-              <Link to="/create">Торт: создай сам</Link>
+              <Link to="/create">Создай сам</Link>
+            </Button>
+            <Button variant="ghost" asChild className="hover:bg-hover">
+              <Link to="/catalog">Каталог</Link>
             </Button>
           </nav>
 
@@ -96,6 +99,9 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
           </Button>
           <Button variant="outline" size="sm" asChild className="flex-1">
             <Link to="/create">Создай сам</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="flex-1">
+            <Link to="/catalog">Каталог</Link>
           </Button>
         </nav>
       </div>
