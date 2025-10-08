@@ -170,6 +170,9 @@ export const Auth = () => {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: tempEmail,
         password: signupPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       });
 
       if (authError) throw authError;
