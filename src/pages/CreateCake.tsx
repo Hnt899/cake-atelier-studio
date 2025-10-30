@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CategorySidebar } from "@/components/CategorySidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Save } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 type CakeType = "cupcake" | "bento" | "custom" | null;
 
@@ -21,6 +26,18 @@ export const CreateCake = () => {
   const [selectedType, setSelectedType] = useState<CakeType>(null);
   const [customOptions, setCustomOptions] = useState<CustomOptions>({});
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [cakeName, setCakeName] = useState("");
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setUser(session?.user || null);
+  };
 
   const cakeTypes = [
     {
@@ -73,6 +90,33 @@ export const CreateCake = () => {
     toast.success("Ваш торт добавлен в корзину!");
     setSelectedType(null);
     setCustomOptions({});
+  };
+
+  const handleSaveCake = async () => {
+    if (!user) {
+      toast.error("Войдите в аккаунт, чтобы сохранить торт");
+      return;
+    }
+
+    if (!cakeName.trim()) {
+      toast.error("Введите название торта");
+      return;
+    }
+
+    const { error } = await supabase.from("saved_cakes").insert([{
+      user_id: user.id,
+      name: cakeName,
+      layers: customOptions as any,
+    }]);
+
+    if (error) {
+      toast.error("Ошибка сохранения торта");
+      return;
+    }
+
+    toast.success("Торт сохранен!");
+    setShowSaveDialog(false);
+    setCakeName("");
   };
 
   const toggleSection = (section: string) => {
@@ -198,13 +242,26 @@ export const CreateCake = () => {
                     {cakeTypes.find((t) => t.id === selectedType)?.price} ₽
                   </span>
                 </div>
-                <Button
-                  onClick={handleAddToCart}
-                  className="w-full bg-secondary hover:bg-hover text-secondary-foreground text-lg py-6"
-                  disabled={!customOptions.shape || !customOptions.filling}
-                >
-                  Добавить в корзину
-                </Button>
+                <div className="space-y-3">
+                  <Button
+                    onClick={handleAddToCart}
+                    className="w-full bg-secondary hover:bg-hover text-secondary-foreground text-lg py-6"
+                    disabled={!customOptions.shape || !customOptions.filling}
+                  >
+                    Добавить в корзину
+                  </Button>
+                  {user && (
+                    <Button
+                      onClick={() => setShowSaveDialog(true)}
+                      variant="outline"
+                      className="w-full"
+                      disabled={!customOptions.shape || !customOptions.filling}
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Сохранить торт
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -212,6 +269,28 @@ export const CreateCake = () => {
       </div>
       
       <Footer />
+
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Сохранить торт</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="cakeName">Название торта</Label>
+              <Input
+                id="cakeName"
+                value={cakeName}
+                onChange={(e) => setCakeName(e.target.value)}
+                placeholder="Введите название"
+              />
+            </div>
+            <Button onClick={handleSaveCake} className="w-full">
+              Сохранить
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

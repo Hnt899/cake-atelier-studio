@@ -1,4 +1,4 @@
-import { ShoppingBasket, Instagram, MessageCircle, Send, Search } from "lucide-react";
+import { ShoppingBasket, Instagram, MessageCircle, Send, Search, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,12 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Button variant="ghost" asChild className="hover:bg-hover">
+              <Link to="/profile">
+                <User className="w-5 h-5 mr-2" />
+                Профиль
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild className="hover:bg-hover">
               <Link to="/cart">
                 <ShoppingBasket className="w-5 h-5 mr-2" />
                 Корзина
@@ -40,7 +46,10 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
               <Link to="/about">Обо мне</Link>
             </Button>
             <Button variant="ghost" asChild className="hover:bg-hover">
-              <Link to="/create">Торт: создай сам</Link>
+              <Link to="/create">Создай сам</Link>
+            </Button>
+            <Button variant="ghost" asChild className="hover:bg-hover">
+              <Link to="/catalog">Каталог</Link>
             </Button>
           </nav>
 
@@ -80,6 +89,9 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
         {/* Mobile Navigation */}
         <nav className="md:hidden flex items-center gap-4 mt-4 pb-2">
           <Button variant="outline" size="sm" asChild className="flex-1">
+            <Link to="/profile">Профиль</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="flex-1">
             <Link to="/cart">Корзина</Link>
           </Button>
           <Button variant="outline" size="sm" asChild className="flex-1">
@@ -87,6 +99,9 @@ export const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
           </Button>
           <Button variant="outline" size="sm" asChild className="flex-1">
             <Link to="/create">Создай сам</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="flex-1">
+            <Link to="/catalog">Каталог</Link>
           </Button>
         </nav>
       </div>
